@@ -1,9 +1,16 @@
+
+
+
 from django.db.models import Q                          # Import Q for complex queries
-from rest_framework import viewsets, generics           # Import DRF viewsets and generic views
+from rest_framework import viewsets, generics,status           # Import DRF viewsets,generic views and status codes
 from rest_framework.permissions import IsAuthenticated, AllowAny  # Import permissions
 from .models import Task                                # Import Task model
 from .serializers import TaskSerializer, UserRegisterSerializer  # Import serializers
 from django.contrib.auth.models import User             # Import User model
+
+from rest_framework.response import Response            #import response class
+from drf_yasg.utils import swagger_auto_schema # Import Swagger decorator
+from .permissions import IsOwner     # Import custom permission
 
 
 class TaskViewSet(viewsets.ModelViewSet):               # ModelViewSet gives full CRUD
@@ -17,7 +24,7 @@ class TaskViewSet(viewsets.ModelViewSet):               # ModelViewSet gives ful
     """
 
     serializer_class = TaskSerializer                   # Use Task serializer
-    permission_classes = [IsAuthenticated]              # Require authentication
+    permission_classes = [IsAuthenticated, IsOwner]              # Require authentication
 
     def get_queryset(self):                             # MUST be inside the class
         """
@@ -54,6 +61,29 @@ class TaskViewSet(viewsets.ModelViewSet):               # ModelViewSet gives ful
         serializer.save(
             owner=self.request.user                     # Assign current user
         )
+    @swagger_auto_schema(                                  # Tell Swagger how this endpoint behaves
+        operation_description="Create a new task",         # Description shown in Swagger UI
+        request_body=TaskSerializer,                      # Define expected request body structure
+        responses={201: TaskSerializer}                   # Define response format
+    )
+    def create(self, request, *args, **kwargs):            # Override default create method
+        """
+        Create a new task and assign it to the logged-in user
+        """
+
+        serializer = self.get_serializer(                 # Initialize serializer with request data
+            data=request.data                            # Incoming JSON data
+        )
+
+        serializer.is_valid(raise_exception=True)         # Validate input data
+
+        self.perform_create(serializer)                   # Call your existing logic (assign owner)
+
+        return Response(                                 # Return HTTP response
+            serializer.data,                             # Return created object data
+            status=status.HTTP_201_CREATED               # Status code 201 = created
+        )
+    
 
 
 class UserRegisterView(generics.CreateAPIView):         # Registration view

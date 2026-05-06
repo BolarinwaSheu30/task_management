@@ -24,7 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY",
+                            "django-insecure-dev-key-12345" # Fallback for local development
+                            ) 
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
@@ -45,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework', # REST Framework for building APIs
+
+    'drf_yasg', # Swagger documentation generator
 
     'tasks',  # custom app for task management
 ]
@@ -127,6 +131,18 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),   # Access token valid for 60 minutes
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),      # Refresh token valid for 1 day
     'AUTH_HEADER_TYPES': ('Bearer',),                 # Authorization header format: Bearer <token>
+}
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,   #  Disable Django login (Basic/Auth session)
+
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {                                   # Define JWT auth
+            'type': 'apiKey',                         # API key type
+            'name': 'Authorization',                  # Header name
+            'in': 'header',                           # Sent in headers
+            'description': 'Enter: Bearer <access_token>',
+        }
+    }
 }
 
 
