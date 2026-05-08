@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
     'rest_framework', # REST Framework for building APIs
 
-    'drf_yasg', # Swagger documentation generator
+    'drf_spectacular', # Django's built-in documentation 
 
     'tasks',  # custom app for task management
 ]
@@ -119,11 +119,19 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use JWT instead of session auth
     ],
+
+    #Global Permissions 
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',                 # Require authentication globally
     ],
+    #Pagination
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',# Enable pagination 
-    'PAGE_SIZE': 5,                                                            # Number of items per page
+    'PAGE_SIZE': 5,
+
+    # drf-spectacular schema generator
+    'DEFAULT_SCHEMA_CLASS':
+        'drf_spectacular.openapi.AutoSchema', 
+                                                               # Number of items per page
 
 }
 
