@@ -9,7 +9,7 @@ from .serializers import TaskSerializer, UserRegisterSerializer  # Import serial
 from django.contrib.auth.models import User             # Import User model
 
 from rest_framework.response import Response            #import response class
-from drf_yasg.utils import swagger_auto_schema # Import Swagger decorator
+
 from .permissions import IsOwner     # Import custom permission
 
 
@@ -61,11 +61,8 @@ class TaskViewSet(viewsets.ModelViewSet):               # ModelViewSet gives ful
         serializer.save(
             owner=self.request.user                     # Assign current user
         )
-    @swagger_auto_schema(                                  # Tell Swagger how this endpoint behaves
-        operation_description="Create a new task",         # Description shown in Swagger UI
-        request_body=TaskSerializer,                      # Define expected request body structure
-        responses={201: TaskSerializer}                   # Define response format
-    )
+                                
+
     def create(self, request, *args, **kwargs):            # Override default create method
         """
         Create a new task and assign it to the logged-in user
