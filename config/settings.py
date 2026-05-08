@@ -120,7 +120,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use JWT instead of session auth
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',                 # Require authentication globally
+        'rest_framework.permissions.AllowAny',                 # Require authentication globally
     ],
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',# Enable pagination 
     'PAGE_SIZE': 5,                                                            # Number of items per page
